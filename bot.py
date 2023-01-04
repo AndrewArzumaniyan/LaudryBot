@@ -137,7 +137,9 @@ async def load_phone_number(message: types.Message, state: FSMContext) -> None:
         
 @dp.message_handler(commands=['display_info'])
 async def display_handler(message: types.Message):
-    await message.answer('Выберите время, чтобы посмотреть свободные стиральные машины')    
+    await message.answer('Выберите время, чтобы посмотреть свободные стиральные машины')
+    #здесь нужно выводить все свободные промежутки
+    
 
 
 
