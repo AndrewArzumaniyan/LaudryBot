@@ -5,13 +5,15 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 import pymongo
 
+import main
+
 async def check_id(collection, id):
-    obj = await collection.find({'id': id})
+    obj = await collection.find_one({'id': id})
     if obj:
         return True
     return False
 
-TOKEN_API = '5982799861:AAHWXIs0QgniPL65H2SOrKArDNWa2DgctvY'
+TOKEN_API = '5907838555:AAE6gGQCqE79QLswN_aZZoa-AimN-1ARBrE'
 
 db_client = pymongo.MongoClient("mongodb+srv://andrey:28122011@cluster0.i2aesum.mongodb.net/?retryWrites=true&w=majority")
 current_db = db_client['TeleBot']
@@ -137,9 +139,9 @@ async def load_phone_number(message: types.Message, state: FSMContext) -> None:
         
 @dp.message_handler(commands=['display_info'])
 async def display_handler(message: types.Message):
-    await message.answer('Выберите время, чтобы посмотреть свободные стиральные машины')
-    #здесь нужно выводить все свободные промежутки
-    
+    res = main.available_time()
+    await message.answer('Выберите время, чтобы посмотреть свободные стиральные машины:\n' + '\n'.join(res))
+    #здесь будут кнопки
 
 
 
