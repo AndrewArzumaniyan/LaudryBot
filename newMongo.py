@@ -61,8 +61,14 @@ def change_free_time(_washer_id, time, boolValue):
 
 
 #* Users
-def check_key(key, value):
-  obj = users.find_one({key: value})
+def check_key(keys, values):
+  if (len(keys) != len(values)):
+    return False
+  filt = {}
+  for i in len(keys):
+    filt.keys[i] = values[i]
+
+  obj = users.find_one(filt)
   if obj:
     return True
   return False
