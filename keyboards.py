@@ -1,15 +1,15 @@
 from aiogram.dispatcher import FSMContext
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.dispatcher.filters import Text
-import mongo
+import newmongo
 
 def get_kb() -> ReplyKeyboardMarkup:
     kb = ReplyKeyboardMarkup(resize_keyboard=True)
     kb.add(KeyboardButton('/Authorize'))
     kb.add(KeyboardButton('/Display_info'))
     kb.add(KeyboardButton('/Order_laundry'))
-    kb.add(KeyboardButton('/Cancel'))
-
+    kb.add(KeyboardButton('/Cancel_my_book'))
+    kb.add(KeyboardButton('/Reset bot'))
     
     return kb
 
@@ -48,7 +48,7 @@ def get_wmkb() -> InlineKeyboardMarkup:
     wmkb = InlineKeyboardMarkup(row_width=2)
 
     available = []
-    available = mongo.available_time_bool()
+    available = newmongo.free_washers()
 
     for i in range(0, 7):
         if available[i] == True:
@@ -60,13 +60,13 @@ def get_wmkb() -> InlineKeyboardMarkup:
     return wmkb
 
 
-def get_ikb() -> InlineKeyboardMarkup:
+def get_ikb(id) -> InlineKeyboardMarkup:
     global collecton_ikb
 
     ikb = InlineKeyboardMarkup(row_width=2)
 
     available = []
-    available = mongo.available_time_bool()
+    available = newmongo.free_time(int(id))
 
     for i in range(0, 7):
         if available[i] == True:

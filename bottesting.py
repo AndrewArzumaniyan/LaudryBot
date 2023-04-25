@@ -5,9 +5,10 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 # from aiogram.dispatcher.filters import Text
 import keyboards as key
-from keyboards import get_kb, get_ikb, reactivate_kb, recieve_document_kb
+from keyboards import get_kb, get_ikb, get_wmkb, reactivate_kb, recieve_document_kb
 
-from mongo import *
+from newmongo import *
+# from mongo import *
 
 
 users_col = connect_collection("users")
@@ -62,7 +63,7 @@ async def cmd_start(message: types.Message) -> None:
 
 @dp.message_handler(commands=['Authorize'])
 async def cmd_create(message: types.Message) -> None:
-    if check_key(users_col, "id", message.from_user.id):
+    if check_key("id", message.from_user.id):
         await message.answer("Вы уже подключены, авторизовываться не надо")
         await message.answer(text = Action, parse_mode='HTML')
     else:
@@ -76,7 +77,7 @@ async def check_name(message: types.Message):
 
 @dp.message_handler(content_types=['text'], state=ProfileStatesGroup.name)
 async def load_name(message: types.Message) -> None:
-    if not check_key(users_col, "name", message.text):
+    if not check_key("name", message.text):
         await message.answer(text = Action_for_stop)
         await dp.bot.stop(message.from_user.id)
 
@@ -107,12 +108,9 @@ async def check_surname(message: types.Message):
 
 @dp.message_handler(state=ProfileStatesGroup.surname)
 async def load_surname(message: types.Message) -> None:
-    if not check_key(users_col, "surname", message.text):
+    if not check_key("surname", message.text):
         await message.answer(text = Action_for_stop)
         await dp.bot.stop(message.from_user.id)
-
-    # async with state.proxy() as data:
-    #     data['surname'] = message.text
 
     await message.answer('Введите номер комнаты')
     await ProfileStatesGroup.next()
@@ -124,12 +122,9 @@ async def check_room_number(message: types.Message):
 
 @dp.message_handler(state=ProfileStatesGroup.room_number)
 async def load_room_number(message: types.Message) -> None:
-    if not check_key(users_col, "room_num", message.text):
+    if not check_key("room_num", message.text):
         await message.answer(text = Action_for_stop)
         await dp.bot.stop(message.from_user.id)
-
-    # async with state.proxy() as data:
-    #     data['room_number'] = message.text
 
     await message.answer('Введите ваш номер телефона без различных знаков и пробелов')
     await ProfileStatesGroup.next()
@@ -141,7 +136,7 @@ async def check_phone_number(message: types.Message):
 
 @dp.message_handler(state=ProfileStatesGroup.phone_number)
 async def load_phone_number(message: types.Message, state: FSMContext) -> None:
-    if not check_key(users_col, "phone_num", message.text):
+    if not check_key("phone_num", message.text):
         await message.answer(text = Action_for_stop)
         await dp.bot.stop(message.from_user.id)
 
@@ -164,11 +159,13 @@ async def orderlaundry(message: types.Message):
     if user["orderes"] <= 0:
         await message.answer('У вас закончились свободные стирки')
     else:
-        await bot.send_message(chat_id = message.from_user.id, text='Выберите свободную стиральную машинку для записи', reply_markup=get_ikb())
+        await bot.send_message(chat_id = message.from_user.id, text='Выберите свободную стиральную машинку для записи', reply_markup=get_wmkb())
 
 
 
-
+@dp.message_query_handler(text = "first_wm")
+async def first(callback: types.CallbackQuerry):
+    await bot.edit_message_reply_markup(chat_id = callback.message.chat.id, message_id = callback.message_id, reply_markup=get_ikb(callback.text))
 
 
 
