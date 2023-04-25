@@ -36,7 +36,7 @@
 * reset_washers() - каждые 18.00 меняет у всех машинок все время на True
 
 **Users functions:**
-* check_key(key, value) - возвращает True, если есть пользователь с key == value
+* check_key(keys, values) - возвращает True, если есть пользователь с key[i] == value[i]
 * add_info(name, surname, room, phone, id) - добавляет пользователю с name, surname, room id и phone
 * give_user_number_orders(telegram_id) - возвращает количество стирок у пользователя
 * change_number_orders(telegram_id, number) - меняет поле number_orders у пользователя с id на number
