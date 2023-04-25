@@ -2,9 +2,10 @@
 
 ##DataBase:
 **Book**
-| _id | time |
-| --------------- |
-| mw number | time object |
+| Column | Description |
+| ------ | ----------- |
+| _id | Unique identifier |
+| time | time object |
 
 **Users**
 | Column | Description |
