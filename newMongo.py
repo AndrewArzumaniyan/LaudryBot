@@ -71,7 +71,7 @@ def check_key(keys, values):
     return False
   filt = {}
   for i in range(len(keys)):
-    filt.keys[i] = values[i]
+    filt[keys[i]] = values[i]
 
   obj = users.find_one(filt)
   if obj:
