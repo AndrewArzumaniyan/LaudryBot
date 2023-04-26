@@ -43,21 +43,26 @@ def change_free_time(_washer_id, time, boolValue):
 
   book.update_one({ "id": _washer_id }, { "$set": new_time_obj })
 
-# def reset_washers():
-#   washers = book.find()
+def reset_washers():
+  obj = {
+    "9.00-10.10": True,
+    "10.10-11.20": True,
+    "11.20-12.30": True,
+    "12.30-14.00": True,
+    "14.00-15.10": True,
+    "15.10-16.20": True
+  }
+  while True:
+    now = datetime.datetime.now()
 
-#   while True:
-#     # Получаем текущее время
-#     now = datetime.datetime.now()
+    # Если текущее время 18:00, меняем состояние всех машинок на True
+    if now.hour == 18 and now.minute == 0:
+      book.update_many({}, { "$set": { "time": obj } })
 
-#     # Если текущее время 18:00, меняем состояние всех машинок на True
-#     if now.hour == 18 and now.minute == 0:
-      
-
-#     # Ждем до следующего дня
-#     tomorrow = now + datetime.timedelta(days=1)
-#     reset_time = datetime.datetime(tomorrow.year, tomorrow.month, tomorrow.day, 18, 0, 0)
-#     time.sleep((reset_time - now).total_seconds())
+    # Ждем до следующего дня
+    tomorrow = now + datetime.timedelta(days=1)
+    reset_time = datetime.datetime(tomorrow.year, tomorrow.month, tomorrow.day, 18, 0, 0)
+    time.sleep((reset_time - now).total_seconds())
 
 
 #* Users
@@ -65,7 +70,7 @@ def check_key(keys, values):
   if (len(keys) != len(values)):
     return False
   filt = {}
-  for i in len(keys):
+  for i in range(len(keys)):
     filt.keys[i] = values[i]
 
   obj = users.find_one(filt)
