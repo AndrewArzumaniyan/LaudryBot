@@ -64,11 +64,14 @@ def change_free_time(_washer_id, time, boolValue):
 def check_key(keys, values):
   if (len(keys) != len(values)):
     return False
-  filt = {}
-  for i in len(keys):
-    filt.keys[i] = values[i]
+  # filt = {}
+  # for i in len(keys):
+  #   filt.keys[i] = values[i]
 
-  obj = users.find_one(filt)
+  key_to_value = {keys: values for keys, values in zip(keys, values)}
+  obj = users.find_one(key_to_value)
+
+  # obj = users.find_one(filt)
   if obj:
     return True
   return False

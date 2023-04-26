@@ -7,8 +7,8 @@
 # import keyboards as key
 # from keyboards import get_kb, get_ikb, get_wmkb, reactivate_kb, recieve_document_kb
 
-# from newmongo import *
-# # from mongo import *
+# # from newmongo import *
+# from mongo import *
 
 
 # users_col = connect_collection("users")

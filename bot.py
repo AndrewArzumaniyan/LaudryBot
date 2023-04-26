@@ -3,8 +3,6 @@ from aiogram.types import CallbackQuery
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
-# from aiogram.dispatcher.filters import Text
-import keyboards as key
 from keyboards import get_kb, get_ikb, get_wmkb, reactivate_kb, recieve_document_kb
 
 from newmongo import *
@@ -41,16 +39,16 @@ Action_for_reset = """
     Вы прервали запись!\nБот приостановлен, для перезапуска нажмите кнопку ниже ↓"""
 
 
-@dp.message_handler(command = ['Start'])
+@dp.message_handler(commands=['Start'])
 async def cmd_start(message: types.Message) -> None:
     await message.answer(text = Action_for_start, parse_mode= 'HTML', reply_markup = get_kb())
 
-@dp.message_handler(command = ['Reset_bot'])
+@dp.message_handler(commands=['Reset_bot'])
 async def cmd_reset(message: types.Message) -> None:
     await message.reply(text = Action_for_reset, parse_mode = 'HTML', reply_markup= reactivate_kb)
     await UserStates.INACTIVE.set()
 
-@dp.message_handler(command = ['Reactivate_bot'])
+@dp.message_handler(commands=['Reactivate_bot'])
 async def cmd_reactivate(message: types.Message) -> None:
     await message.answer('Бот перезапущен')
     await message.answer(text= Action_for_start, parse_mode = 'HTML', reply_markup=get_kb())
@@ -58,7 +56,7 @@ async def cmd_reactivate(message: types.Message) -> None:
 
 
 
-@dp.message_handler(command = ['Authorize'])
+@dp.message_handler(commands=['Authorize'])
 async def authorize_start(message: types.Message) -> None:
     if check_key(["id"], [message.from_user.id]):
         await message.answer("Вы уже подключены, авторизовываться не надо")
@@ -160,7 +158,7 @@ async def display_handler(message: types.Message):
     await message.answer(f'Оставшееся количество стирок: {give_user_number_orders(message.from_user.id)}\n')
 
 
-@dp.message_handler(comamnds = ['Order_Laundry'])
+@dp.message_handler(commands=['Order_Laundry'])
 async def order_laundry(message: types.Message):
     if give_user_number_orders(message.from_user.id) <= 0:
         await message.answer('У вас закончились свободные стирки')
@@ -319,7 +317,7 @@ async def four_to_fif_handler(callback: types.CallbackQuery):
     change_number_orders(callback.message.chat.id, number-1)
 
     global num
-    change_free_time(num, "9.00-10.10", False)
+    change_free_time(num, "15.10-16.20", False)
 
     await callback.answer()
 
