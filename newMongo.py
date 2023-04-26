@@ -1,6 +1,9 @@
 import datetime
+import calendar
 import time
+import threading
 import pymongo
+import pandas as pd
 from copy import deepcopy
 
 
@@ -64,6 +67,32 @@ def reset_washers():
     reset_time = datetime.datetime(tomorrow.year, tomorrow.month, tomorrow.day, 18, 0, 0)
     time.sleep((reset_time - now).total_seconds())
 
+def run_algorithm():
+  obj = {
+    "9.00-10.10": True,
+    "10.10-11.20": True,
+    "11.20-12.30": True,
+    "12.30-14.00": True,
+    "14.00-15.10": True,
+    "15.10-16.20": True
+  }
+  book.update_many({}, { "$set": { "time": obj } })
+
+def run_algorithm_daily():
+  def thread_func():
+    while True:
+      now = datetime.datetime.now()
+
+      if now.hour == 18 and now.minute == 0:
+        t = threading.Thread(target=run_algorithm)
+        t.start()
+
+      # Wait for one hour before checking again
+      time.sleep(3600)
+
+  t = threading.Thread(target=thread_func)
+  t.start()
+
 
 #* Users
 def check_key(keys, values):
@@ -88,6 +117,24 @@ def give_user_number_orders(telegram_id):
 def change_number_orders(telegram_id, number):
   users.update_one({ "id": telegram_id }, { "$set": { "number_orders" : number } } )
 
+def reset_orders():
+  users.update_many({}, {"$set": { "number_orders": 4 } })
+
+def reset_numbers_orders():
+  def thread_func():
+    while True:
+      now = datetime.datetime.now()
+      last_day = calendar.monthrange(now.year, now.month)[1]
+
+      if now.day == last_day and now.hour == 18 and now.minute == 0:
+        t = threading.Thread(target=reset_orders)
+        t.start()
+
+      # Wait for one hour before checking again
+      time.sleep(3600)
+
+  t = threading.Thread(target=thread_func)
+  t.start()
 
 #* Visits
 def add_string(telegram_id, date, full_name, room, time):
@@ -96,70 +143,22 @@ def add_string(telegram_id, date, full_name, room, time):
 def del_string(telegram_id, date, time):
   visits.delete_one({ "id": telegram_id, "date": date, "time": time })
 
+def fill_doc(low_date = datetime.datetime.now() - datetime.timedelta(days=30), high_date = datetime.datetime.now()):
+  # Get data from MongoDB
+    data = list(visits.find({
+      "date": {"$gte": low_date, "$lte": high_date}
+    }))
+
+    # Create a Pandas DataFrame from the data
+    df = pd.DataFrame(data)
+
+    # Write the DataFrame to an Excel file
+    filename = f"visit_users.xls"
+    df.to_excel(filename, index=False)
+
+    print(f"Data exported to {filename}")
 
 
-# def available_time():
-#   available_time = []
+# visits.insert_one({ "telegram_id": 1223434, "date": datetime.datetime.now(), "full_name": "Хангельдин Ансар", "room": 202, "time": "9.00-10.10" })
 
-#   book = connect_collection('book')
-#   asd = book.find()
-#   for obj in asd:
-#     time = obj['time']
-#     for key in time:
-#       if not key in available_time:
-#           if time[key] == True:
-#             available_time.append(key)
-
-#   return available_time
-
-# def available_time_bool():
-#   available_time = [False for i in range(8)]
-#   tmp = []
-
-#   book = connect_collection('book')
-#   asd = book.find()
-#   for obj in asd:
-#     tmp.append(obj)
-  
-#   for i in range(len(tmp)):
-#     time = list(tmp[i]['time'].values())
-    
-#     for j in range(len(time)):
-#       if available_time[j]:
-#         continue
-#       if time[j]:
-#         available_time[j] = True
-  
-#   return available_time
-    
-
-
-# async def auth_err(collection_name, key, message, answer):
-#   collection = connect_collection(collection_name)
-#   if not check_key(collection, key, message.text):
-#     await message.answer(answer)
-#     return True
-#   return False
-
-# def give_user(collection, id):
-#   return collection.find_one({'id': id})
-
-# def change_key(collection, filter, key, value):
-#   collection.update_one(filter, { "$set": { key: value } })
-
-# def change_key_book(collection, time, value):
-#   document = collection.find()
-#   tmp = []
-#   for obj in document:
-#     tmp.append(obj)
-  
-#   res = list(filter(lambda x: x["time"][time] != value, tmp))
-  
-#   if len(res):
-#     cur_id = res[0]["_id"]
-#     cur_filter = res[0]["time"]
-#     res_filter = deepcopy(res[0]["time"])
-#     res_filter[time] = value
-#     collection.update_one({"time" : cur_filter}, { "$set": {"time": res_filter} })
-#     return cur_id
-#   return None
+fill_doc()
