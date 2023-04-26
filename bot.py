@@ -58,8 +58,6 @@ async def cmd_reactivate(message: types.Message) -> None:
 
 
 
-#Authorization
-
 @dp.message_handler(command = ['Authorize'])
 async def authorize_start(message: types.Message) -> None:
     if check_key(["id"], [message.from_user.id]):
@@ -68,6 +66,7 @@ async def authorize_start(message: types.Message) -> None:
     else:
         await message.answer("Давайте привяжем вас к вашему аккаунту. Введите ваше имя")
         await ProfileStatesGroup.name.set()
+
 
 
 
@@ -152,6 +151,9 @@ async def load_phone_number(message: types.Message, state: FSMContext) -> None:
 
     await message.answer(text = Action, parse_mode='HTML')
     await state.finish()
+
+
+
 
 @dp.message_handler(commands=['Display_Info'])
 async def display_handler(message: types.Message):
