@@ -45,4 +45,4 @@
 **Visits functions:**
 * add_string(telegram_id, date, full_name, room, time = “9.00-10.10”) - добавляет объект в базу данных
 * del_string(telegram_id, date, time) - удаляет объект из базы данных
-* give_doc(low_date, high_date = now) - возвращает документ посещений с low_date до high_date (по стандарту у high_date дата текущая)
+* fill_doc(low_date, high_date = now) - заполняет документ visit_users.excl посещений с low_date до high_date (по стандарту у high_date дата текущая)
