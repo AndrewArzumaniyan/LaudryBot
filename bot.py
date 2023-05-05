@@ -166,6 +166,10 @@ async def order_laundry(message: types.Message):
         await bot.send_message(chat_id = message.from_user.id, text='Выберите свободную стиральную машинку для записи', reply_markup=get_wmkb())
 
 
+# @dp.message_handler(commands=['Cancel_my_book'])
+# async def cancel_book(message: types.Message):
+
+
 
 @dp.callback_query_handler(text = 'first_wm')
 async def first_wm(callback: types.CallbackQuery):
